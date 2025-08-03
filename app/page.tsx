@@ -1,3 +1,4 @@
+import Chat from "@/components/Chat";
 import Navbar from "@/components/Navbar";
 
 export default function Home() {
@@ -6,6 +7,10 @@ export default function Home() {
       <header>
         <Navbar />
       </header>
+
+      <main>
+        <Chat />
+      </main>
     </>
   );
 }

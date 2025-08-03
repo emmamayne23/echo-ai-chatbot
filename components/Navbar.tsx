@@ -18,7 +18,7 @@ const Navbar = () => {
     const toggleSidebar = () => setIsOpen((prev) => !prev);
 
     return (
-      <div className="flex h-screen">
+      <div className="flex">
         {/* Sidebar: toggleable on all screen sizes */}
         <aside
           className={`bg-gray-800 text-white shadow-lg h-full w-64 flex-shrink-0 z-50 flex flex-col transition-transform duration-300
