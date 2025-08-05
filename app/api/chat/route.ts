@@ -1,6 +1,4 @@
 import { streamText, convertToModelMessages, UIMessage } from "ai"
-// import { openai } from "@ai-sdk/openai"
-// import { vercel } from "@ai-sdk/vercel"
 import { google } from "@ai-sdk/google"
 
 
@@ -16,7 +14,6 @@ export async function POST(request: Request) {
     try {
         
         const result = await streamText({
-            // model: openai("gpt-3.5-turbo"),
             model: google("gemini-1.5-flash"),
             messages: convertToModelMessages(messages)
         })
