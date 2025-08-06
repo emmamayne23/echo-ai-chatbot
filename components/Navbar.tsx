@@ -80,13 +80,13 @@ const Navbar = () => {
       </aside>
 
       <div className="flex-1 flex flex-col fixed top-0 left-0 right-0">
-        <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md border-b sticky top-0 z-40">
+        <nav className="flex items-center justify-between px-6 py-3 bg-gray-900 text-gray-200 shadow-md border-b border-b-gray-700 sticky top-0 z-40">
           <button
-            className="p-2 rounded-md hover:bg-gray-100 transition"
+            className="p-2 rounded-md hover:bg-gray-700 transition"
             onClick={toggleSidebar}
             aria-label="Open sidebar"
           >
-            <AlignStartVertical size={28} color="black" />
+            <AlignStartVertical size={28} className="text-gray-200" />
           </button>
 
           <div className="flex items-center gap-3">
@@ -97,7 +97,7 @@ const Navbar = () => {
               width={40}
               className="rounded"
             />
-            <h1 className="text-xl font-bold tracking-tight text-gray-800">
+            <h1 className="text-xl font-bold text-gray-200 tracking-tight">
               echo-ai
             </h1>
           </div>
@@ -109,7 +109,7 @@ const Navbar = () => {
               rel="noopener noreferrer"
               className="hover:text-gray-600 transition"
             >
-              <FaGithubSquare size={28} className="text-gray-700" />
+              <FaGithubSquare size={28} className="text-gray-100" />
             </Link>
           </div>
         </nav>
