@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { SendHorizontal } from "lucide-react";
 import { useChat } from "@ai-sdk/react";
-import { VideoText } from "./video-text";
+// import { VideoText } from "./video-text";
 
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -39,10 +39,10 @@ const Chat = () => {
     <div className="flex flex-col h-full min-h-screen bg-gray-900 text-gray-200">
       {!messages.length && (
         <div className=" grid place-items-center shadow-sm">
-          <div className="relative h-[300px] w-full overflow-hidden">
-            <VideoText src="https://cdn.pixabay.com/video/2024/05/25/213616_large.mp4">
+          <div className="relative h-[200px] w-full overflow-hidden">
+            {/* <VideoText src="https://cdn.pixabay.com/video/2024/05/25/213616_large.mp4">
               Echo AI
-            </VideoText>
+            </VideoText> */}
           </div>
           <h1 className="text-4xl font-semibold text-gray-200">
             What&apos;s on your mind?

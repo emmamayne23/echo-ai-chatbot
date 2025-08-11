@@ -5,15 +5,22 @@ import Image from "next/image";
 
 import { FaGithubSquare } from "react-icons/fa";
 import { AlignStartVertical } from "lucide-react";
-import { CircleUser } from "lucide-react";
+// import { CircleUser } from "lucide-react";
 import { X } from "lucide-react";
 import { SquarePen } from "lucide-react";
 import { Search } from "lucide-react";
 import { Images } from "lucide-react";
 
+import { SignedOut, SignedIn, UserButton, SignInButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+
 import Link from "next/link";
 
 const Navbar = () => {
+  const { user } = useUser()
+
+  console.log("User:", user);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
@@ -68,14 +75,21 @@ const Navbar = () => {
           </Link>
         </nav>
         <div className="px-5 mt-auto pb-6 flex items-center justify-between">
-          <CircleUser size={28} className="text-gray-300" />
+          {/* <CircleUser size={28} className="text-gray-300" /> */}
+          <SignedIn>
+            <UserButton
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "w-10 h-10",
+                  userButtonAvatarImage: "rounded-full",
+                },
+              }}
+            /> { user?.fullName  }
+          </SignedIn>
 
-          <Link
-            href="/"
-            className="px-4 py-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
-          >
-            Login
-          </Link>
+          <SignedOut>
+            <SignInButton mode="modal" className="px-4 py-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition" />
+          </SignedOut>
         </div>
       </aside>
 

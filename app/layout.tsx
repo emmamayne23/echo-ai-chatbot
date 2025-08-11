@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs"
+import Navbar from "@/components/Navbar";
 import "./globals.css";
 
 
@@ -23,7 +25,14 @@ export default function RootLayout({
       <body
         className={interFont.className}
       >
-        {children}
+        <ClerkProvider 
+          // appearance={{ variables: { colorPrimary: "#fe5933" } }}
+        >
+        <header className="mb-16">
+          <Navbar />
+        </header>
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );
