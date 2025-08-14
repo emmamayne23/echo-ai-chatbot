@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 import { FaGithubSquare } from "react-icons/fa";
-import { AlignStartVertical } from "lucide-react";
+import { AlignStartVertical, MessageSquare } from "lucide-react";
 // import { CircleUser } from "lucide-react";
 import { X } from "lucide-react";
 import { SquarePen } from "lucide-react";
@@ -16,14 +16,36 @@ import { useUser } from "@clerk/nextjs";
 
 import Link from "next/link";
 
+import { getAllChatSessions } from "@/lib/actions/general.actions";
+
+interface ChatSession {
+  id: string;
+  title: string;
+  user_id: string;
+  created_at: string;
+}
+
 const Navbar = () => {
   const { user } = useUser()
-
-  console.log("User:", user);
-
+  const [sessions, setSessions] = useState<ChatSession[]>([])
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
+
+  useEffect(() => {
+    const fetchSessions = async () => {
+      if (user?.id) {
+        try {
+          const sessionData = await getAllChatSessions(user.id);
+          setSessions(sessionData);
+        } catch (error) {
+          console.error("Failed to fetch sessions:", error);
+        }
+      }
+    };
+
+    fetchSessions();
+  }, [user?.id]);
 
   return (
     <div className="flex">
@@ -74,6 +96,16 @@ const Navbar = () => {
             Library
           </Link>
         </nav>
+        {sessions.length > 0 && (
+          <div className="px-3 py-2 flex-1 overflow-y-auto flex flex-col items-center ">
+            {sessions.map((session) => (
+              <Link href={`/chat/${session.id}`} key={session.id} className="py-2 flex items-center gap-3 px-3 rounded w-full hover:bg-gray-700 transition">
+                <MessageSquare size={20} />
+                <p className="text-sm">{session.title}</p>
+            </Link>
+            ))}
+          </div>
+        )}
         <div className="px-5 mt-auto pb-6 flex items-center justify-between">
           {/* <CircleUser size={28} className="text-gray-300" /> */}
           <SignedIn>

@@ -25,9 +25,7 @@ export default function RootLayout({
       <body
         className={interFont.className}
       >
-        <ClerkProvider 
-          // appearance={{ variables: { colorPrimary: "#fe5933" } }}
-        >
+        <ClerkProvider>
         <header className="mb-16">
           <Navbar />
         </header>
