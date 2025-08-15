@@ -24,7 +24,7 @@ export const chatSession = async (firstMessage: SimpleMessage[]) => {
     const titleResult = await generateText({
       model: google("gemini-1.5-flash"),
       messages: [
-        { role: "system", content: "Summarize the conversation above into a short descriptive title (max 10 words)." },
+        { role: "system", content: "Summarize the first message from the user and put it in a phrase (max 10 words)." },
         ...modelMessage,
       ]
     })

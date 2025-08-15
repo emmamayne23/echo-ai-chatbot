@@ -1,6 +1,7 @@
 "use server"
 
 import { createSupabaseClient } from "../supabase";
+import { currentUser, auth } from "@clerk/nextjs/server";
 
 export const getChatSession = async (userId: string) => {
     const supabase = createSupabaseClient()
@@ -56,4 +57,24 @@ export const getChatMessages = async (sessionId: string) => {
     if(messagesError || !messagesData) throw new Error("Failed to fetch messages")
 
     return messagesData
+}
+
+export const createUser = async () => {
+  const supabase = createSupabaseClient()
+
+  const user = await currentUser()
+  const { userId } = await auth()
+  const username = user?.fullName
+  const useremail = user?.primaryEmailAddress?.emailAddress
+
+  if(!user) return null
+
+  const { data, error } = await supabase
+    .from("users")
+    .upsert({ clerk_user_id: userId, name: username, email: useremail })
+    .select()
+
+  if(error || !data) throw new Error("Failed to create user in the database")
+
+  return data[0]
 }

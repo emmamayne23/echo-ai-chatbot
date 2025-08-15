@@ -48,7 +48,7 @@ const Navbar = () => {
   }, [user?.id]);
 
   return (
-    <div className="flex">
+    <div className="flex fixed top-0 left-0 z-50">
       <div className={`${isOpen ? "fixed left-0 right-0 top-0 bottom-0 inset-0 z-50 bg-black opacity-50" : "hidden"}`} onClick={toggleSidebar}></div>
       <aside
         className={`bg-gray-800 text-white shadow-lg h-[97.5%] w-64 sm:w-72 md:w-80 flex-shrink-0 z-50 flex flex-col transition-transform duration-300
