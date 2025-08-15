@@ -8,12 +8,20 @@ import { google } from "@ai-sdk/google"
 type SimpleMessage = { role: "user" | "assistant"; content: string }
 
 export const chatSession = async (firstMessage: SimpleMessage[]) => {
-    const { userId: user_id } = await auth()
     const supabase = createSupabaseClient()
     console.log("firstMessage:", firstMessage);
 
     if (!firstMessage || !Array.isArray(firstMessage) || firstMessage.length === 0) {
         throw new Error("Invalid message format")
+    }
+
+    // Try to get user ID, but don't fail if not authenticated
+    let user_id: string | null = null;
+    try {
+        const { userId } = await auth();
+        user_id = userId;
+    } catch (error) {
+        console.log("User not authenticated, creating anonymous session");
     }
 
     const modelMessage = firstMessage.map(msg => ({

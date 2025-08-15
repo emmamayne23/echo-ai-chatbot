@@ -1,7 +1,6 @@
 import React from 'react'
 import { getChatMessages } from '@/lib/actions/general.actions'
 import { currentUser } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
 import Chat from '@/components/Chat'
 
 interface ChatMessagesProps {
@@ -12,16 +11,19 @@ const page = async ({ params }: ChatMessagesProps) => {
     const { id } = await params
     const user = await currentUser()
 
-    if(!user) redirect("/")
-
     // Load initial messages on the server and pass to client
     let initialMessages = [] as any[]
-    try {
-        initialMessages = await getChatMessages(id)
-        console.log("Loaded messages from database:", initialMessages)
-    } catch (error) {
-        console.error("Failed to load messages:", error)
-        redirect("/")
+    
+    // Only load messages if user is authenticated
+    if (user) {
+        try {
+            initialMessages = await getChatMessages(id)
+            console.log("Loaded messages from database:", initialMessages)
+        } catch (error) {
+            console.error("Failed to load messages:", error)
+            // Don't redirect, just show empty chat
+            initialMessages = []
+        }
     }
 
     return (

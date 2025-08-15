@@ -63,11 +63,14 @@ export const createUser = async () => {
   const supabase = createSupabaseClient()
 
   const user = await currentUser()
+  
+  if (!user) {
+    throw new Error("No authenticated user found")
+  }
+  
   const { userId } = await auth()
   const username = user?.fullName
   const useremail = user?.primaryEmailAddress?.emailAddress
-
-  if(!user) return null
 
   const { data, error } = await supabase
     .from("users")

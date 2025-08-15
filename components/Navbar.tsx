@@ -26,7 +26,7 @@ interface ChatSession {
 }
 
 const Navbar = () => {
-  const { user } = useUser()
+  const { user, isSignedIn } = useUser()
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [isOpen, setIsOpen] = useState(false);
 
@@ -34,18 +34,21 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchSessions = async () => {
-      if (user?.id) {
+      if (user?.id && isSignedIn) {
         try {
           const sessionData = await getAllChatSessions(user.id);
           setSessions(sessionData);
         } catch (error) {
           console.error("Failed to fetch sessions:", error);
         }
+      } else {
+        // Clear sessions for anonymous users
+        setSessions([]);
       }
     };
 
     fetchSessions();
-  }, [user?.id]);
+  }, [user?.id, isSignedIn]);
 
   return (
     <div className="flex fixed top-0 left-0 z-50">
@@ -96,7 +99,7 @@ const Navbar = () => {
             Library
           </Link>
         </nav>
-        {sessions.length > 0 && (
+        {sessions.length > 0 ? (
           <div className="px-3 py-2 flex-1 overflow-y-auto flex flex-col items-center ">
             {sessions.map((session) => (
               <Link href={`/chat/${session.id}`} key={session.id} className="py-2 flex items-center gap-3 px-3 rounded w-full hover:bg-gray-700 transition">
@@ -104,6 +107,14 @@ const Navbar = () => {
                 <p className="text-sm">{session.title}</p>
             </Link>
             ))}
+          </div>
+        ) : isSignedIn ? (
+          <div className="px-3 py-2 flex-1 flex items-center justify-center">
+            <p className="text-gray-400 text-sm text-center">No chat sessions yet</p>
+          </div>
+        ) : (
+          <div className="px-3 py-2 flex-1 flex items-center justify-center">
+            <p className="text-gray-400 text-sm text-center">Sign in to see your chats</p>
           </div>
         )}
         <div className="px-5 mt-auto pb-6 flex items-center justify-between">
@@ -120,7 +131,11 @@ const Navbar = () => {
           </SignedIn>
 
           <SignedOut>
-            <SignInButton mode="modal" className="px-4 py-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition" />
+            <SignInButton mode="modal">
+              <button className="px-4 py-2 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
+                Sign In
+              </button>
+            </SignInButton>
           </SignedOut>
         </div>
       </aside>

@@ -5,6 +5,7 @@ import { SendHorizontal } from "lucide-react";
 import { useChat } from "@ai-sdk/react";
 import { chatSession, saveMessages } from "@/lib/actions/message.actions";
 import { getChatMessages } from "@/lib/actions/general.actions";
+import { useUser } from "@clerk/nextjs";
 
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -24,12 +25,20 @@ interface DatabaseMessage {
 }
 
 const Chat = ({ sessionId: initialSessionId, initialMessages = [] }: ChatProps) => {
+  const { user, isSignedIn } = useUser();
   const [input, setInput] = useState("");
   const [isLoading, setIsloading] = useState(false);
   const sessionIdRef = useRef<string | null>(null);
   const { messages, sendMessage, setMessages } = useChat({
     onFinish: async (assistantMessage: any) => {
       console.log("onFinish triggered with:", assistantMessage);
+      
+      // Only save to database if user is signed in
+      if (!isSignedIn) {
+        console.log("User not signed in, skipping database save");
+        return;
+      }
+      
       try {
         const sid = sessionIdRef.current;
         if (!sid) {
@@ -85,7 +94,7 @@ const Chat = ({ sessionId: initialSessionId, initialMessages = [] }: ChatProps) 
       console.log("Converting database messages:", initialMessages);
       const formattedMessages = initialMessages.map((msg: DatabaseMessage) => ({
         id: msg.id,
-        role: msg.role === "ai" || msg.role === "assistant" ? "assistant" : "user",
+        role: (msg.role === "ai" || msg.role === "assistant" ? "assistant" : "user") as "user" | "assistant",
         content: [{ type: "text" as const, text: msg.content }],
         parts: [{ type: "text" as const, text: msg.content }],
         createdAt: new Date(msg.created_at)
@@ -111,18 +120,21 @@ const Chat = ({ sessionId: initialSessionId, initialMessages = [] }: ChatProps) 
     if (!input.trim()) return;
     setIsloading(true);
 
-    let currentSessionId = sessionId
+    let currentSessionId = sessionId;
 
-    if (!sessionId) {
-      const sessionData = await chatSession([
-        { role: "user", content: input }
-      ]);
-      currentSessionId = sessionData.id;
-      setSessionId(currentSessionId);
-      sessionIdRef.current = currentSessionId;
+    // Only create session and save messages if user is signed in
+    if (isSignedIn) {
+      if (!sessionId) {
+        const sessionData = await chatSession([
+          { role: "user", content: input }
+        ]);
+        currentSessionId = sessionData.id;
+        setSessionId(currentSessionId);
+        sessionIdRef.current = currentSessionId;
+      }
+
+      await saveMessages(currentSessionId!, "user", input);
     }
-
-    await saveMessages(currentSessionId!, "user", input)
 
     try {
       sendMessage({ text: input });
@@ -143,6 +155,11 @@ const Chat = ({ sessionId: initialSessionId, initialMessages = [] }: ChatProps) 
           <h1 className="text-4xl font-semibold text-gray-200">
             What&apos;s on your mind?
           </h1>
+          {!isSignedIn && (
+            <p className="text-gray-400 mt-4 text-center max-w-md">
+              You can chat with echo AI anonymously! Sign in to save your conversations.
+            </p>
+          )}
         </div>
       )}
 
